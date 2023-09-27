@@ -1,0 +1,492 @@
+<?php
+include_once 'model.php';
+
+$maConnexion = ConnectDB();
+$req_type=$_SERVER['REQUEST_METHOD'];
+$req_path=$_SERVER['PATH_INFO'];
+$req_data=explode("/",$req_path);
+
+
+$msgClient = "GO";
+$msgToSend = strval($msgClient);
+$msgClient2 = "OK";
+$msgToSend2 = strval($msgClient2);
+
+$addrPort = array("172.20.21.190", 9999);
+$bufferSize = 1024;
+
+
+
+
+
+if($req_type=="GET")
+{
+    //if(isset($_COOKIE['idPartie'])){
+        if($req_data[1]=="etat"){
+            $requete = "SELECT * FROM Etat order by idEtat DESC Limit 1";
+            $tab = array();
+            $reponse = executerRequete($maConnexion,$requete,$tab);
+            echo json_encode($reponse);
+        } 
+        if($req_data[1]=="listeEquipes"){
+            $requete = "SELECT idEquipe,NomEquipe FROM Equipe ";
+            $tab = array();
+            $reponse = executerRequete($maConnexion,$requete,$tab);
+            echo json_encode($reponse);
+        } 
+    //}
+    
+    if($req_data[1]=="delete"){
+        foreach($_COOKIE as $nom => $valeur){
+            setcookie($nom, '', time() - 3600, '/');
+         }
+    }
+}
+
+if($req_type=="POST")
+{//echo "POST";   
+    $donneesAdJSON=file_get_contents("php://input");
+    $donneesAdAssoc=json_decode($donneesAdJSON,true);
+
+    if($req_data[1]=="connexion"){
+        //---------------------Debut Test un Administrateur------------------------------------------------------------------------------------------
+
+        $requete = "SELECT idAdministrateur FROM Administrateur WHERE Pseudo=? AND Mdp=?";
+        $tab = array($donneesAdAssoc['Pseudo'],$donneesAdAssoc['Mdp']);
+        $reponse = executerRequete($maConnexion,$requete,$tab);
+
+        
+
+        if(empty($reponse)){
+
+            $TabRetour=array("Status"=>"Erreur");
+        }
+        else{
+            $idAdministrateur=$reponse[0]['idAdministrateur'];
+            $TabRetour=array("Status"=>"OK","idAdministrateur"=>$idAdministrateur);  
+        }
+        echo json_encode($TabRetour);
+
+        setcookie("idAdministrateur", $idAdministrateur, 0);
+
+
+        //---------------------Fin Test un Administrateur--------------------------------------------------------------------------------------------
+    }
+
+    if($req_data[1]=="equipe"){
+        //---------------------Début Test une Equipe-------------------------------------------------------------------------------------------------
+
+        //$joueurs = $donneesAdAssoc['Joueur'];
+        //------------------------TEST J1------------------------------------------------------------------------------------------------------------
+        $requete_J1 = "SELECT idJoueur FROM Joueur WHERE Nom=? AND Prenom=? AND Pseudo=?";
+        $tab_J1 = array($donneesAdAssoc['Joueur'][0]['Nom'],$donneesAdAssoc['Joueur'][0]['Prenom'],$donneesAdAssoc['Joueur'][0]['Pseudo']);
+        $reponse_J1 = executerRequete($maConnexion,$requete_J1,$tab_J1);
+        if(empty($reponse_J1)){
+            $requete2_J1 ="INSERT INTO Joueur(Nom, Prenom, Pseudo) VALUES (?,?,?)";
+            $tab2_J1 =array($donneesAdAssoc['Joueur'][0]['Nom'],$donneesAdAssoc['Joueur'][0]['Prenom'],$donneesAdAssoc['Joueur'][0]['Pseudo']);
+            
+            $reponse2_J1 =executerRequete($maConnexion,$requete2_J1,$tab2_J1);
+          
+            $idJoueur1 = recupererLeDernierIdInserer($maConnexion);
+        
+        }
+        else{
+            $idJoueur1=$reponse_J1[0]['idJoueur'];
+        }
+
+        //------------------------TEST J2--------------------------------------------------------------------------------------------------------
+        $requete_J2 = "SELECT idJoueur FROM Joueur WHERE Nom=? AND Prenom=? AND Pseudo=?";
+        $tab_J2 = array($donneesAdAssoc['Joueur'][1]['Nom'],$donneesAdAssoc['Joueur'][1]['Prenom'],$donneesAdAssoc['Joueur'][1]['Pseudo']);
+        $reponse_J2 = executerRequete($maConnexion,$requete_J2,$tab_J2);
+        if(empty($reponse_J2)){
+            $requete2_J2 ="INSERT INTO Joueur(Nom, Prenom, Pseudo) VALUES (?,?,?) ";
+            $tab2_J2 =array($donneesAdAssoc['Joueur'][1]['Nom'],$donneesAdAssoc['Joueur'][1]['Prenom'],$donneesAdAssoc['Joueur'][1]['Pseudo']);
+            $reponse2_J2 =executerRequete($maConnexion,$requete2_J2,$tab2_J2);
+            $idJoueur2 = recupererLeDernierIdInserer($maConnexion);
+        }
+        else{
+            $idJoueur2=$reponse_J2[0]['idJoueur'];
+        }
+
+        //------------------------TEST J3--------------------------------------------------------------------------------------------------------
+        $requete_J3 = "SELECT idJoueur FROM Joueur WHERE Nom=? AND Prenom=? AND Pseudo=?";
+        $tab_J3 = array($donneesAdAssoc['Joueur'][2]['Nom'],$donneesAdAssoc['Joueur'][2]['Prenom'],$donneesAdAssoc['Joueur'][2]['Pseudo']);
+        $reponse_J3 = executerRequete($maConnexion,$requete_J3,$tab_J3);
+        if(empty($reponse_J3)){
+            $requete2_J3 ="INSERT INTO Joueur(Nom, Prenom, Pseudo) VALUES (?,?,?) ";
+            $tab2_J3 =array($donneesAdAssoc['Joueur'][2]['Nom'],$donneesAdAssoc['Joueur'][2]['Prenom'],$donneesAdAssoc['Joueur'][2]['Pseudo']);
+            $reponse2_J3 =executerRequete($maConnexion,$requete2_J3,$tab2_J3);
+            $idJoueur3 = recupererLeDernierIdInserer($maConnexion);
+        }
+        else{
+            $idJoueur3=$reponse_J3[0]['idJoueur'];
+        }
+
+       
+            
+        //------------------------TEST Equipe----------------------------------------------------------------------------------------------------
+        $requete_Equipe = "SELECT idEquipe FROM Equipe WHERE idJoueur1=? AND idJoueur2=? AND idJoueur3=? AND NomEquipe=?";
+        $tab_Equipe = array($idJoueur1,$idJoueur2,$idJoueur3,$donneesAdAssoc['NomEquipe']);
+        $reponse_Equipe = executerRequete($maConnexion,$requete_Equipe,$tab_Equipe);
+
+        if(empty($reponse_Equipe)){
+
+            $requete_Equipe = "SELECT idEquipe FROM Equipe WHERE idJoueur1=? AND idJoueur2=? AND idJoueur3=? AND NomEquipe=?";
+            $tab_Equipe = array($idJoueur1,$idJoueur3,$idJoueur2,$donneesAdAssoc['NomEquipe']);
+            $reponse_Equipe = executerRequete($maConnexion,$requete_Equipe,$tab_Equipe);
+
+            if(empty($reponse_Equipe)){
+                $requete_Equipe = "SELECT idEquipe FROM Equipe WHERE idJoueur1=? AND idJoueur2=? AND idJoueur3=? AND NomEquipe=?";
+                $tab_Equipe = array($idJoueur2,$idJoueur1,$idJoueur3,$donneesAdAssoc['NomEquipe']);
+                $reponse_Equipe = executerRequete($maConnexion,$requete_Equipe,$tab_Equipe);
+                if(empty($reponse_Equipe)){
+
+                    $requete_Equipe = "SELECT idEquipe FROM Equipe WHERE idJoueur1=? AND idJoueur2=? AND idJoueur3=? AND NomEquipe=?";
+                    $tab_Equipe = array($idJoueur2,$idJoueur3,$idJoueur1,$donneesAdAssoc['NomEquipe']);
+                    $reponse_Equipe = executerRequete($maConnexion,$requete_Equipe,$tab_Equipe);
+        
+                    if(empty($reponse_Equipe)){
+                        $requete_Equipe = "SELECT idEquipe FROM Equipe WHERE idJoueur1=? AND idJoueur2=? AND idJoueur3=? AND NomEquipe=?";
+                        $tab_Equipe = array($idJoueur3,$idJoueur1,$idJoueur2,$donneesAdAssoc['NomEquipe']);
+                        $reponse_Equipe = executerRequete($maConnexion,$requete_Equipe,$tab_Equipe);
+
+                        if(empty($reponse_Equipe)){
+
+                            $requete_Equipe = "SELECT idEquipe FROM Equipe WHERE idJoueur1=? AND idJoueur2=? AND idJoueur3=? AND NomEquipe=?";
+                            $tab_Equipe = array($idJoueur3,$idJoueur2,$idJoueur1,$donneesAdAssoc['NomEquipe']);
+                            $reponse_Equipe = executerRequete($maConnexion,$requete_Equipe,$tab_Equipe);
+                            if(empty($reponse_Equipe)){
+
+                                $requete_Equipe = "SELECT idEquipe FROM Equipe WHERE NomEquipe=?";
+                                $tab_Equipe = array($donneesAdAssoc['NomEquipe']);
+                                $reponse_Equipe = executerRequete($maConnexion,$requete_Equipe,$tab_Equipe);
+                                if(empty($reponse_Equipe)){
+                                    $requete2_Equipe="INSERT INTO Equipe(idJoueur1,idJoueur2,idJoueur3,NomEquipe) values(?,?,?,?)";
+                                    
+                                    $tab2_Equipe=array($idJoueur1,$idJoueur2,$idJoueur3,$donneesAdAssoc['NomEquipe']);
+                                    $reponse2_Equipe=executerRequete($maConnexion,$requete2_Equipe,$tab2_Equipe);
+
+                                    $idEquipe = recupererLeDernierIdInserer($maConnexion); 
+                                    //echo "ID EQUIPE : ".$idEquipe."\n";
+                                    $idJoueur=array("idJoueur1"=>$idJoueur1,"idJoueur2"=>$idJoueur2,"idJoueur3"=>$idJoueur3);
+                                    $TabRetour=array("idEquipe"=>$idEquipe,"idJoueur"=>$idJoueur,"Status"=>"OK");
+                                    echo json_encode($TabRetour);
+                                }
+                                else{
+                                    $TabRetour=array("Status"=>"Erreur");
+                                    echo json_encode($TabRetour);
+                                }
+                            }
+                            else{
+                                $idEquipe=$reponse_Equipe[0]['idEquipe'];
+                                $idJoueur=array("idJoueur1"=>$idJoueur1,"idJoueur2"=>$idJoueur2,"idJoueur3"=>$idJoueur3);
+                                $TabRetour=array("idEquipe"=>$idEquipe,"idJoueur"=>$idJoueur);
+                                echo json_encode($TabRetour);
+                            }
+
+                        }
+                        else{
+                            $idEquipe=$reponse_Equipe[0]['idEquipe'];
+                            $idJoueur=array("idJoueur1"=>$idJoueur1,"idJoueur2"=>$idJoueur2,"idJoueur3"=>$idJoueur3);
+                            $TabRetour=array("idEquipe"=>$idEquipe,"idJoueur"=>$idJoueur);
+                            echo json_encode($TabRetour);
+                        }
+                    }
+                    else{
+                        $idEquipe=$reponse_Equipe[0]['idEquipe'];
+                        $idJoueur=array("idJoueur1"=>$idJoueur1,"idJoueur2"=>$idJoueur2,"idJoueur3"=>$idJoueur3);
+                        $TabRetour=array("idEquipe"=>$idEquipe,"idJoueur"=>$idJoueur);
+                        echo json_encode($TabRetour);
+                    }
+                }
+                else{
+                    $idEquipe=$reponse_Equipe[0]['idEquipe'];
+                    $idJoueur=array("idJoueur1"=>$idJoueur1,"idJoueur2"=>$idJoueur2,"idJoueur3"=>$idJoueur3);
+                    $TabRetour=array("idEquipe"=>$idEquipe,"idJoueur"=>$idJoueur);
+                    echo json_encode($TabRetour);
+                }
+
+            }
+            else{
+                $idEquipe=$reponse_Equipe[0]['idEquipe'];
+                $idJoueur=array("idJoueur1"=>$idJoueur1,"idJoueur2"=>$idJoueur2,"idJoueur3"=>$idJoueur3);
+                $TabRetour=array("idEquipe"=>$idEquipe,"idJoueur"=>$idJoueur);
+                echo json_encode($TabRetour);
+            }
+        
+        }
+        else{
+            $idEquipe=$reponse_Equipe[0]['idEquipe'];
+            $idJoueur=array("idJoueur1"=>$idJoueur1,"idJoueur2"=>$idJoueur2,"idJoueur3"=>$idJoueur3);
+            $TabRetour=array("idEquipe"=>$idEquipe,"idJoueur"=>$idJoueur);
+            echo json_encode($TabRetour);
+        }
+       
+        //---------------------Fin Test une Equipe---------------------------------------------------------------------------------------------------
+        setcookie("idJoueur1", $idJoueur1, 0);
+        setcookie("idJoueur2", $idJoueur2, 0);
+        setcookie("idJoueur3", $idJoueur3, 0);
+        setcookie("idEquipe", $idEquipe, 0);
+
+        //if(isset($idEquipe)){
+            //$requete_Partie="INSERT INTO Partie(idEquipe,idAdministrateur,ModeDeJeu,Etape) values(?,?,?,2)";
+            $requete_Partie="INSERT INTO Partie(idEquipe,idAdministrateur,Etape) values(?,?,2)";
+            $tab_Partie=array($idEquipe,$_COOKIE['idAdministrateur']);//AFFICHER IDADMIN SI ERREUR!
+            $reponse_Partie=executerRequete($maConnexion,$requete_Partie,$tab_Partie);
+            $idPartie = recupererLeDernierIdInserer($maConnexion);
+            // Ajouter un cookie idPartie ???
+            setcookie("idPartie", $idPartie, 0);
+
+            if(isset($reponse_Partie)){
+                $requete_Etat="INSERT INTO Etat(idPartie,Etape1,Etape2,Etape3,Etape4,Etape5,Etape6,Etape7) values(?,0,0,0,0,0,0,0)";
+                $tab_Etat=array($idPartie);
+                $reponse_Etat=executerRequete($maConnexion,$requete_Etat,$tab_Etat);
+                $idEtat = recupererLeDernierIdInserer($maConnexion);    
+            }
+        //}
+    
+    }
+
+    /*
+    if($req_data[1]=="missions"){
+        //---------------------Debut Test une MISSIONS-----------------------------------------------------------------------------------------------
+
+        $requete = "SELECT idAdministrateur FROM Administrateur WHERE Pseudo=? AND Mdp=?";
+        $tab = array($donneesAdAssoc['Pseudo'],$donneesAdAssoc['Mdp']);
+        $reponse = executerRequete($maConnexion,$requete,$tab);
+
+        
+
+        if(empty($reponse)){
+            $TabRetour=array("Status"=>"Erreur");
+        }
+        else{
+            $idAdministrateur=$reponse[0]['idAdministrateur'];
+            $idTAB=array("idAdministrateur"=>$idAdministrateur);
+            echo json_encode($idTAB);
+        }
+
+        //---------------------Fin Test une MISSIONS-------------------------------------------------------------------------------------------------
+    }*/
+
+    if($req_data[1]=="epreuve")
+    {
+        if($donneesAdAssoc['Mode']=='auto') $donneesAdAssoc['epreuve']=1; 
+        print_r($donneesAdAssoc);       
+        if($donneesAdAssoc['epreuve']==1){
+                    
+                    
+            $requete = "UPDATE Etat SET Etape1='1',Etape2='0',Etape3='0',Etape4='0',Etape5='0',Etape6='0',Etape7='0' WHERE idPartie=?";
+            $tab = array($_COOKIE["idPartie"]);
+            $reponse = executerRequete($maConnexion,$requete,$tab);
+
+            $output = shell_exec('php cli_R1.php');
+            /* Update de l'état  */
+            $requete = "UPDATE Etat SET Etape1='2',Etape2='0',Etape3='0',Etape4='0',Etape5='0',Etape6='0',Etape7='0' WHERE idPartie=?";
+            $tab = array($_COOKIE["idPartie"]);
+            $reponse = executerRequete($maConnexion,$requete,$tab);
+
+            $TabRetour=array("Status"=>"OK");
+            echo json_encode($TabRetour);
+            if($donneesAdAssoc['Mode']=='auto') $donneesAdAssoc['epreuve']=2; 
+
+        }
+        if($donneesAdAssoc['epreuve']==2){
+                    
+            $requete = "UPDATE Etat SET Etape1='2',Etape2='1',Etape3='1',Etape4='0',Etape5='0',Etape6='0',Etape7='0' WHERE idPartie=?";
+            $tab = array($_COOKIE["idPartie"]);
+            $reponse = executerRequete($maConnexion,$requete,$tab);
+
+            /*$output = shell_exec('php cli_R2.php');
+            $output_bis = shell_exec('php cli_R3.php');*/
+            $TabRetour=array("Status"=>"OK");
+            echo json_encode($TabRetour);
+            if($donneesAdAssoc['Mode']=='auto') $donneesAdAssoc['epreuve']=4; 
+
+        }
+        if($donneesAdAssoc['epreuve']==4){
+
+            $requete = "UPDATE Etat SET Etape1='2',Etape2='2',Etape3='2',Etape4='1',Etape5='0',Etape6='0',Etape7='0' WHERE idPartie=?";
+            $tab = array($_COOKIE["idPartie"]);
+            $reponse = executerRequete($maConnexion,$requete,$tab);
+                    
+            $output = shell_exec('php cli_R4.php');
+            $TabRetour=array("Status"=>"OK");
+            echo json_encode($TabRetour);
+            if($donneesAdAssoc['Mode']=='auto') $donneesAdAssoc['epreuve']=5; 
+        }
+        if($donneesAdAssoc['epreuve']==5){
+                    
+            $requete = "UPDATE Etat SET Etape1='2',Etape2='2',Etape3='2',Etape4='2',Etape5='1',Etape6='0',Etape7='0' WHERE idPartie=?";
+            $tab = array($_COOKIE["idPartie"]);
+            $reponse = executerRequete($maConnexion,$requete,$tab);
+
+            $output = shell_exec('php cli_R5.php');
+            $TabRetour=array("Status"=>"OK");
+            echo json_encode($TabRetour);
+            if($donneesAdAssoc['Mode']=='auto') $donneesAdAssoc['epreuve']=6;
+        }
+        if($donneesAdAssoc['epreuve']==6){
+                    
+            $requete = "UPDATE Etat SET Etape1='2',Etape2='2',Etape3='2',Etape4='2',Etape5='2',Etape6='1',Etape7='0' WHERE idPartie=?";
+            $tab = array($_COOKIE["idPartie"]);
+            $reponse = executerRequete($maConnexion,$requete,$tab);
+
+            $output = shell_exec('php cli_R6.php');
+            $TabRetour=array("Status"=>"OK");
+            echo json_encode($TabRetour);
+            
+        }
+        if($donneesAdAssoc['epreuve']==7){
+                    
+            $requete = "UPDATE Etat SET Etape1='2',Etape2='2',Etape3='2',Etape4='2',Etape5='2',Etape6='2',Etape7='1' WHERE idPartie=?";
+            $tab = array($_COOKIE["idPartie"]);
+            $reponse = executerRequete($maConnexion,$requete,$tab);
+
+            $output = shell_exec('php cli_R7.php');
+            $TabRetour=array("Status"=>"OK");
+            echo json_encode($TabRetour);
+  
+        }
+        /*if($req_data[1]=="auto"){
+                    
+                    
+                $requete = "UPDATE Etat SET Etape1='1',Etape2='0',Etape3='0',Etape4='0',Etape5='0',Etape6='0',Etape7='0' WHERE idPartie=?";
+                $tab = array($_COOKIE["idPartie"]);
+                $reponse = executerRequete($maConnexion,$requete,$tab);
+    
+                $output = shell_exec('php cli_R1.php');
+                $TabRetour=array("Status"=>"OK");
+                echo json_encode($TabRetour);
+                        
+                $requete = "UPDATE Etat SET Etape1='2',Etape2='1',Etape3='1',Etape4='0',Etape5='0',Etape6='0',Etape7='0' WHERE idPartie=?";
+                $tab = array($_COOKIE["idPartie"]);
+                $reponse = executerRequete($maConnexion,$requete,$tab);
+    
+                $output = shell_exec('php cli_R2_3.php');
+                /*$output_bis = shell_exec('php cli_R3.php');
+                $TabRetour=array("Status"=>"OK"); 
+                echo json_encode($TabRetour);
+    
+                $requete = "UPDATE Etat SET Etape1='2',Etape2='2',Etape3='2',Etape4='1',Etape5='0',Etape6='0',Etape7='0' WHERE idPartie=?";
+                $tab = array($_COOKIE["idPartie"]);
+                $reponse = executerRequete($maConnexion,$requete,$tab);
+                        
+                $output = shell_exec('php cli_R4.php');
+                $TabRetour=array("Status"=>"OK");
+                echo json_encode($TabRetour);
+    
+                        
+                $requete = "UPDATE Etat SET Etape1='2',Etape2='2',Etape3='2',Etape4='2',Etape5='1',Etape6='0',Etape7='0' WHERE idPartie=?";
+                $tab = array($_COOKIE["idPartie"]);
+                $reponse = executerRequete($maConnexion,$requete,$tab);
+    
+                $output = shell_exec('php cli_R5.php');
+                $TabRetour=array("Status"=>"OK");
+                echo json_encode($TabRetour);
+    
+            
+                        
+                $requete = "UPDATE Etat SET Etape1='2',Etape2='2',Etape3='2',Etape4='2',Etape5='2',Etape6='1',Etape7='0' WHERE idPartie=?";
+                $tab = array($_COOKIE["idPartie"]);
+                $reponse = executerRequete($maConnexion,$requete,$tab);
+    
+                $output = shell_exec('php cli_R6.php');
+                $TabRetour=array("Status"=>"OK");
+                echo json_encode($TabRetour);
+    
+            
+            
+                /*        
+                $requete = "UPDATE Etat SET Etape1='2',Etape2='2',Etape3='2',Etape4='2',Etape5='2',Etape6='2',Etape7='1' WHERE idPartie='?'";
+                $tab = array($_COOKIE["idPartie"]);
+                $reponse = executerRequete($maConnexion,$requete,$tab);
+    
+                $output = shell_exec('php cli_R7.php');
+                $TabRetour=array("Status"=>"OK");
+                echo json_encode($TabRetour);
+      
+               
+        }*/
+            
+    }       
+        /*}
+    }*/
+   /* 
+   // Créer une instance de la classe MyThread
+    $thread = new MyThread();
+
+    // Démarrez le thread
+    $thread->start();
+
+    // Attendre que le thread se termine
+    $thread->join(); 
+    */
+    
+/*
+///////////////////////Début Insérer un drone//////////////////////
+
+    $requete2 = "SELECT iddrone FROM drone WHERE refDrone=?";
+    $tab2 = array($donneesAdAssoc['donneesVol']['numero']);
+    $reponse2 = executerRequete($maConnexion,$requete2,$tab2);
+
+    if(empty($reponse2)){
+        $requete2="INSERT INTO drone(refDrone) values(?)";
+        $tab2=array($donneesAdAssoc['donneesVol']['numero']);
+        $reponse2=executerRequete($maConnexion,$requete2,$tab2);
+        $iddrone = recupererLeDernierIdInserer($maConnexion);
+    }
+
+    else{
+        $iddrone=$reponse2[0]['iddrone'];
+    }
+
+    echo $iddrone;
+    //echo " id drone - ".$reponse2[0]['iddrone'];
+
+    ///////////////////////Fin Insérer un drone///////////////////////
+
+///////////////////////Début Insérer un vol///////////////////////
+
+    $requete3 = "SELECT idvol FROM vol WHERE iddrone=? AND idutilisateur=? AND dateVol=?";
+    $dateVol=$donneesAdAssoc['donneesVol']['time'];
+    $date=date('Y-m-d H:i:s',$dateVol); 
+    $tab3 = array($iddrone,$idutilisateur,$date);
+    $reponse3 = executerRequete($maConnexion,$requete3,$tab3);
+
+    print_r($tab3);
+
+    if(empty($reponse3)){
+        $requete3="INSERT INTO vol(iddrone,idutilisateur,dateVol) values(?,?,?)";
+        $tab3 = array($iddrone,$idutilisateur,$date);
+        $reponse3=executerRequete($maConnexion,$requete3,$tab3);
+        $idvol = recupererLeDernierIdInserer($maConnexion);
+    }
+
+    else{
+        $idvol=$reponse3[0]['idvol'];
+    }
+
+    echo $idvol;
+
+    /////////////////////////Fin Insérer un vol//////////////////////
+
+    ///////////////////////Début Insérer un état//////////////////////
+
+    for($i=0;$i<count($donneesAdAssoc['donneesVol']['etats']);$i++){
+        foreach($donneesAdAssoc['donneesVol']['etats'][$i] as $cle=> $valeur){
+            $$cle = $valeur;
+        }
+        $requete4="INSERT INTO etat(idvol,pitch,roll,yaw,vgx,vgy,vgz,templ,temph,tof,h,bat,baro,time,agx,agy,agz) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        $tab4=array($idvol,$pitch,$roll,$yaw,$vgx,$vgy,$vgz,$templ,$temph,$tof,$h,$bat,$baro,$time,$agx,$agy,$agz);
+        $reponse4=executerRequete($maConnexion,$requete4,$tab4);
+
+    }
+    ///////////////////////Fin Insérer un état////////////////////////
+    */
+
+
+    
+} //-----------------------FIN POST---------------------------------------------------------------------------------
+
+?>

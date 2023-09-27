@@ -1,0 +1,55 @@
+<?php
+
+$msgClient = "GO";
+$msgToSend = strval($msgClient);
+$msgClient2 = "OK";
+$msgToSend2 = strval($msgClient2);
+
+$addrPort = array("172.20.31.243", 9999);
+$bufferSize = 1024;
+
+function myThreadFunction(){
+    echo "Le thread est en cours\n";
+}
+
+$pid=pcntl_fork();
+
+if($pid == -1){
+    die('La création du thread a echoue');
+}
+elseif ($pid){
+    echo "L'epreuve est lancé\n";
+     // Créer un socket UDP
+     $socket=socket_create(AF_INET, SOCK_DGRAM, 0);
+     echo "Debut de communication\n";
+ 
+ 
+     // Envoyer au serveur à l'aide du socket UDP créé
+     socket_sendto($socket, $msgToSend, strlen($msgToSend), 0, $addrPort[0], $addrPort[1]);
+     socket_recvfrom($socket, $msgServer, $bufferSize, 0, $addrPort[0], $addrPort[1]);
+     echo "Message du Client : " . $msgToSend . "\n";
+ 
+     $msg = "Message du Serveur " . $msgServer;
+     echo $msg . "\n";
+ 
+     socket_recvfrom($socket, $msgServer2, $bufferSize, 0, $addrPort[0], $addrPort[1]);
+     $msg2 = "Message du Serveur " . $msgServer2;
+     echo $msg2 . "\n";
+ 
+     if ($msgServer2 == "FIN") {
+         socket_sendto($socket, $msgToSend2, strlen($msgToSend2), 0, $addrPort[0], $addrPort[1]);
+         echo "Message du Client : " . $msgToSend2 . "\n";
+         echo "Fin de communication\n";
+         $TabRetour=array("Status"=>"OK");
+         echo json_encode($TabRetour);
+     } else {
+         echo "ERROR\n";
+         }
+}
+else{
+    myThreadFunction();
+    exit();
+}
+echo "L'epreuve est termine. \n";
+
+?>

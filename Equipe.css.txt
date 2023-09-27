@@ -1,0 +1,72 @@
+body{
+    background-color: #4f687c81;
+}
+h1{
+    display:flex;
+    justify-content: center;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+}
+#InputNomEquipe{
+  margin-top: 70px;
+  margin-bottom: 100px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  
+  
+}
+.grid-container {
+    width: 50% 50% 50% 50%;  
+    display: grid;
+    gap: 50px 100px;
+    grid-template-columns: auto auto auto;
+    background-color: #4f687c81;
+    padding: 10px;
+  }
+  
+.grid-item {
+  height: 50%;
+  
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(77, 42, 42, 0);
+    padding: 20px;
+    font-size: 30px;
+    text-align: center;
+    border-radius: 20px;
+   
+  }
+.grayed-out{
+background-color: rgb(255, 255, 255);
+
+
+}
+footer {
+  text-align: center;
+  margin: 5px;
+  padding:100px;    
+}
+
+#ButtonValider {
+  display: flex;
+  text-align: center;
+  position: relative;
+  height: 50px;
+  width: 80px;
+  margin: 0 auto;
+}
+.BouttonNomEquipe{
+  display: flex;
+  justify-content:center;
+}
+.LogoMissions{
+  background-color: rgb(255, 255, 255);
+  }
+.Input-equipe{
+
+  width: 30%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+
+  

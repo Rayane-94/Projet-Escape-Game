@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Missions</title>
+    <link rel="stylesheet" href="Missions.css">
+</head>
+<body>
+    
+    <nav>
+        <h1>Etat des missions</h1>
+        <!--0=pas commencer
+            1=en cour 
+            2=fini  -->
+    </nav>
+        <div class="Missions">
+            <input type="button"  id="M1" value="Mission 1" />
+            <input type="button"  id="M2" value="Mission 2/3">
+            <input type="button"  id="M4" value="Mission 4">
+            <input type="button"  id="M5" value="Mission 5" />
+
+            <div class="ScenarioABC">
+                        <input type="button"  id="A" value="A" />
+                        <input type="button"  id="B" value="B" />
+                        <input type="button"  id="C" value="C" />
+                    </div>
+
+            <input type="button"  id="M6" value="Mission 6">
+            <input type="button"  id="M7" value="Mission 7" />
+            <input type="button"  id="A1" value="Avarie 1">
+            <input type="button"  id="A2" value="Avarie 2">
+</div>
+    
+   <!-- <input type="button" id ="MAJ" value="Mettre à jour"> -->
+    
+   <footer>
+    <button type="image"  id="LogoEquipe"> <img src="Images/LogoEquipe.png" > </button>
+ </footer>
+
+
+  
+    
+   
+    <script src="Missions.js"></script>
+</body>

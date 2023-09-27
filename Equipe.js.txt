@@ -1,0 +1,45 @@
+
+var BoutonConnexion = document.getElementById("ButtonValider");
+
+BoutonConnexion.addEventListener("click", EnvoyerDonneesEquipe);
+
+
+
+function EnvoyerDonneesEquipe(){
+
+    var xhttp = new XMLHttpRequest();
+        var NomEquipe=document.getElementById('InputNomEquipe').value;
+        var NomJ1 = document.getElementById('grayed-outNom1').value;
+        var PrenomJ1 = document.getElementById('grayed-outPrenom1').value;
+        var PseudoJ1 = document.getElementById('grayed-outPseudo1').value;
+        var NomJ2 = document.getElementById('grayed-outNom2').value;
+        var PrenomJ2 = document.getElementById('grayed-outPrenom2').value;
+        var PseudoJ2 = document.getElementById('grayed-outPseudo2').value;
+        var NomJ3 = document.getElementById('grayed-outNom3').value;
+        var PrenomJ3 = document.getElementById('grayed-outPrenom3').value;
+        var PseudoJ3 = document.getElementById('grayed-outPseudo3').value;
+
+     donneesJSON='{"Joueur" : [ {"Nom":"'+NomJ1+'","Prenom":"'+PrenomJ1+'","Pseudo":"'+PseudoJ1+'"}, {"Nom":"'+NomJ2+'","Prenom":"'+PrenomJ2+'","Pseudo":"'+PseudoJ2+'"}, {"Nom":"'+NomJ3+'","Prenom":"'+PrenomJ3+'","Pseudo":"'+PseudoJ3+'" } ], "NomEquipe":"'+NomEquipe+'"}';
+      
+    xhttp.onreadystatechange = function() 
+    {
+
+        if (this.readyState == 4 && this.status == 200) 
+        {
+           var reponse=JSON.parse(xhttp.responseText);
+           if(reponse.Status=="Erreur"){alert('Erreur');}
+           else {alert('Equipe ajouter avec succès');RedirectionMissions(); }  
+
+        }
+    };
+
+    xhttp.open("POST", "rest.php/equipe", true);
+    xhttp.send(donneesJSON);
+}
+var logoEQUIPE= document.getElementById("LogoMissions")
+logoEQUIPE.addEventListener("click",RedirectionMissions);
+
+function RedirectionMissions(){
+
+    window.location.href = "Missions.php"; 
+}

@@ -1,0 +1,361 @@
+ /* var BoutonMAJ = document.getElementById("MAJ");
+
+  BoutonMAJ.addEventListener("click", EnvoyerEtatDesMissions);
+ */  
+  function EnvoyerEtatDesMissions()
+  {
+  
+      fetch('rest.php/etat/1')
+      .then(function(response){ 
+      return response.json()})
+      .then(function(data)
+      {
+      
+        for (i=1; i<8; i++)
+        {
+          if(i!=3){
+            let Etape='Etape'+i;
+            let Mission='M'+i;
+        console.log(data);
+        if(data[0][Etape]==0)
+          document.getElementById(Mission).style.backgroundColor="white";
+
+        else if(data[0][Etape]==1)
+          document.getElementById(Mission).style.backgroundColor="orange";
+
+          else if(data[0][Etape]==2)
+          document.getElementById(Mission).style.backgroundColor="green";
+          }
+          
+        }
+    
+    }).catch(error => console.error('Error:', error)); 
+  }
+  function TimerEtatMissions() {
+    let Timer = window.setTimeout(EnvoyerEtatDesMissions, 1000);
+  }
+  // Exécuter la fonction en boucle infinie en utilisant setInterval
+  setInterval(TimerEtatMissions, 1000);
+  
+  
+/*Mise en place de la requete POST pour envoyer a l'api le Numeros de missions cliquer afin de lancer la missions*/
+
+    
+ 
+    /*const MiseAjour = document.getElementById("M1");*/
+    
+
+   /* function EnvoyerLancementMissions()
+    {
+      window.alert("La mission est bien lancée" );
+      return (true);
+    }
+*/
+var BoutonM1 = document.getElementById("M1");
+  BoutonM1.addEventListener("click",EnvoieDonneesJSONM1 );
+    function EnvoieDonneesJSONM1()
+    {
+      var xhttp = new XMLHttpRequest();
+      donneesJSON='{"Missions": 1}';
+        
+          xhttp.onreadystatechange = function() 
+        {
+
+              if (this.readyState == 4 && this.status == 200) 
+              {
+                var reponse=JSON.parse(xhttp.responseText);
+                
+                if(reponse.Status=="Erreur"){alert('Erreur');}
+                else {alert('Missions bien ajouter');}  
+
+              
+              }                     
+        };
+          xhttp.open("POST", "rest.php/missions", true);
+          xhttp.send(donneesJSON);  
+    }
+
+
+    /*var BoutonM2 = document.getElementById("M2");                       
+    BoutonM2.addEventListener("click",EnvoieDonneesJSONM2 );
+    function EnvoieDonneesJSONM2()
+    {
+      var xhttp = new XMLHttpRequest();
+      donneesJSON='{"Missions": 2}';
+        
+          xhttp.onreadystatechange = function() 
+        {
+
+              if (this.readyState == 4 && this.status == 200) 
+              {
+                var reponse=JSON.parse(xhttp.responseText);
+                if(reponse.Status=="Erreur"){alert('Erreur');}
+                else {alert('Missions bien ajouter');}  
+
+              
+              }                     
+        };
+          xhttp.open("POST", "rest.php/missions", true);
+          xhttp.send(donneesJSON);  
+    }
+    */
+/*  Envoie Missions 2 Scenario A */
+
+    var BoutonM2A = document.getElementById("A");
+    BoutonM2A.addEventListener("click",EnvoieDonneesJSONM2A );
+    function EnvoieDonneesJSONM2A()
+    {
+      var xhttp = new XMLHttpRequest();
+      donneesJSON='{"Missions": 2A}';
+        
+          xhttp.onreadystatechange = function() 
+        {
+
+              if (this.readyState == 4 && this.status == 200) 
+              {
+                var reponse=JSON.parse(xhttp.responseText);
+                if(reponse.Status=="Erreur"){alert('Erreur');}
+                else {alert('Missions bien ajouter');}  
+
+              
+              }                     
+        };
+          xhttp.open("POST", "rest.php/missions", true);
+          xhttp.send(donneesJSON);  
+    }
+
+ // ZDFin Missions 2 Scenario A
+
+ var BoutonM2B = document.getElementById("B");
+    BoutonM2B.addEventListener("click",EnvoieDonneesJSONM2B );
+    function EnvoieDonneesJSONM2B()
+    {
+      var xhttp = new XMLHttpRequest();
+      donneesJSON='{"Missions": 2B}';
+        
+          xhttp.onreadystatechange = function() 
+        {
+
+              if (this.readyState == 4 && this.status == 200) 
+              {
+                var reponse=JSON.parse(xhttp.responseText);
+                if(reponse.Status=="Erreur"){alert('Erreur');}
+                else {alert('Missions bien ajouter');}  
+
+              
+              }                     
+        };
+          xhttp.open("POST", "rest.php/missions", true);
+          xhttp.send(donneesJSON);  
+    }
+  
+  var BoutonM2C = document.getElementById("C");
+  BoutonM2C.addEventListener("click",EnvoieDonneesJSONM2C );
+  function EnvoieDonneesJSONM2C()
+  {
+    var xhttp = new XMLHttpRequest();
+    donneesJSON='{"Missions": 2C}';
+      
+        xhttp.onreadystatechange = function() 
+      {
+ 
+            if (this.readyState == 4 && this.status == 200) 
+            {
+              var reponse=JSON.parse(xhttp.responseText);
+              if(reponse.Status=="Erreur"){alert('Erreur');}
+              else {alert('Missions bien ajouter');}  
+ 
+            
+            } 
+                       
+      };
+        xhttp.open("POST", "rest.php/missions", true);
+        xhttp.send(donneesJSON);  
+   }
+ 
+
+    var BoutonM4 = document.getElementById("M4");
+    BoutonM4.addEventListener("click",EnvoieDonneesJSONM4 );
+    function EnvoieDonneesJSONM4()
+    {
+      var xhttp = new XMLHttpRequest();
+      donneesJSON='{"Missions": 4}';
+        
+          xhttp.onreadystatechange = function() 
+        {
+
+              if (this.readyState == 4 && this.status == 200) 
+              {
+                var reponse=JSON.parse(xhttp.responseText);
+                if(reponse.Status=="Erreur"){alert('Erreur');}
+                else {alert('Missions bien ajouter');}  
+
+              
+              }                     
+        };
+          xhttp.open("POST", "rest.php/missions", true);
+          xhttp.send(donneesJSON);  
+    }
+    var BoutonM5 = document.getElementById("M5");
+    BoutonM5.addEventListener("click",EnvoieDonneesJSONM5 );
+    function EnvoieDonneesJSONM5()
+    {
+      var xhttp = new XMLHttpRequest();
+      donneesJSON='{"Missions": 5}';
+        
+          xhttp.onreadystatechange = function() 
+        {
+
+              if (this.readyState == 4 && this.status == 200) 
+              {
+                var reponse=JSON.parse(xhttp.responseText);
+                if(reponse.Status=="Erreur"){alert('Erreur');}
+                else {alert('Missions bien ajouter');}  
+
+              
+              }                     
+        };
+          xhttp.open("POST", "rest.php/missions", true);
+          xhttp.send(donneesJSON);  
+    }
+    var BoutonM6 = document.getElementById("M6");
+    BoutonM6.addEventListener("click",EnvoieDonneesJSONM6 );
+    function EnvoieDonneesJSONM6()
+    {
+      var xhttp = new XMLHttpRequest();
+      donneesJSON='{"Missions": 6}';
+        
+          xhttp.onreadystatechange = function() 
+        {
+
+              if (this.readyState == 4 && this.status == 200) 
+              {
+                var reponse=JSON.parse(xhttp.responseText);
+                if(reponse.Status=="Erreur"){alert('Erreur');}
+                else {alert('Missions bien ajouter');}  
+
+              
+              }                     
+        };
+          xhttp.open("POST", "rest.php/missions", true);
+          xhttp.send(donneesJSON);  
+    }
+    var BoutonM7 = document.getElementById("M7");
+    BoutonM7.addEventListener("click",EnvoieDonneesJSONM7 );
+    function EnvoieDonneesJSONM7()
+    {
+      var xhttp = new XMLHttpRequest();
+      donneesJSON='{"Missions": 7}';
+        
+          xhttp.onreadystatechange = function() 
+        {
+
+              if (this.readyState == 4 && this.status == 200) 
+              {
+                var reponse=JSON.parse(xhttp.responseText);
+                if(reponse.Status=="Erreur"){alert('Erreur');}
+                else {alert('Missions bien ajouter');}  
+
+              
+              }                     
+        };
+          xhttp.open("POST", "rest.php/missions", true);
+          xhttp.send(donneesJSON);  
+    }
+    var BoutonM2scenario = document.getElementById("M2");
+    var BouttonA = document.getElementById("A");
+    var BouttonB = document.getElementById("B");
+    var BouttonC = document.getElementById("C");   
+      
+      /* initialiser en Non Visible */
+      BouttonA.style.display = "none";
+      BouttonB.style.display = "none";
+      BouttonC.style.display = "none";
+    
+    
+      BoutonM2scenario.addEventListener("click", function AparissionDisparition()  {
+        
+        if(getComputedStyle(BouttonA).display != "none"){ /* verifie si un contenu est afficher/visible  */ 
+          BouttonA.style.display = "none";
+          BouttonB.style.display = "none";
+          BouttonC.style.display = "none";
+        } else {
+          BouttonA.style.display = "block";
+          BouttonB.style.display = "block";
+          BouttonC.style.display = "block";
+        }
+        })
+    
+    
+      /*test si on peut cliquer sur le boutton meme si on le voit pas resulat non donc cela ne devrait poas poser de soucis 
+      var BoutonEchoA = document.getElementById("A");
+      BoutonEchoA.addEventListener("click",Echo );
+      function Echo() {
+        alert('Missions bien ajouter')
+      }
+                fin TEST*/
+    
+    /* Apparissions disparition fonctionn mtn faire l'envoie des donnees  que si click sue A click sur B ou click sur C ET non pas sur Missions 2/3  */ 
+    
+    
+    
+    /*BoutonM2scenario.addEventListener("click",testecho);
+    function testecho()
+    {
+      alert("La je suis cense afficher les 3 bouttons de scenario est celui clicker est choisi A B ou C ");
+    }*/
+    
+    /*redirection via un boutton*/
+    var BoutonAvarie1 = document.getElementById("A1");
+    BoutonAvarie1.addEventListener("click",EnvoieDonneesJSONAvarie1 );
+    function EnvoieDonneesJSONAvarie1()
+    {
+      var xhttp = new XMLHttpRequest();
+      donneesJSON='{"Avarie": 1}';
+        
+          xhttp.onreadystatechange = function() 
+        {
+
+              if (this.readyState == 4 && this.status == 200) 
+              {
+                var reponse=JSON.parse(xhttp.responseText);
+                if(reponse.Status=="Erreur"){alert('Erreur');}
+                else {alert('Avarie bien ajouter');}  
+
+              
+              }                     
+        };
+          xhttp.open("POST", "rest.php/missions", true);
+          xhttp.send(donneesJSON);  
+    } 
+
+    var BoutonAvarie2 = document.getElementById("A2");
+    BoutonAvarie2.addEventListener("click",EnvoieDonneesJSONAvarie2 );
+    function EnvoieDonneesJSONAvarie2()
+    {
+      var xhttp = new XMLHttpRequest();
+      donneesJSON='{"Avarie": 2}';
+        
+          xhttp.onreadystatechange = function() 
+        {
+
+              if (this.readyState == 4 && this.status == 200) 
+              {
+                var reponse=JSON.parse(xhttp.responseText);
+                if(reponse.Status=="Erreur"){alert('Erreur');}
+                else {alert('Avarie bien ajouter');}  
+
+              
+              }                     
+        };
+          xhttp.open("POST", "rest.php/missions", true);
+          xhttp.send(donneesJSON);  
+    } 
+    
+              var bouttonEquipe =document.getElementById("LogoEquipe");
+              bouttonEquipe.addEventListener("click",redirectionEquipe)
+              
+              function redirectionEquipe(){
+                window.location.href = "Equipe.php"; 
+              }
+    

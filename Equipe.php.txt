@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+  
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="Equipe.css">
+        <title>Interface de contrôles</title>
+
+      </head>
+
+  <body>
+    <nav> 
+    <h1>Insérer votre Equipe </h1>
+    
+    </nav>
+    <form id='monEquipe' >
+      
+
+      <div class="BouttonNomEquipe"> <input id="InputNomEquipe" type="text" placeholder="Nom d'equipe" ></div>
+      
+          <div class="grid-container">
+                <div class="grid-item"><input type="text" class="Input-equipe" placeholder="J1 Nom" id="grayed-outNom1"></div>
+                <div class="grid-item"><input type="text" class="Input-equipe" placeholder="J2 Nom" id="grayed-outNom2"></div>
+                <div class="grid-item"><input type="text" class="Input-equipe" placeholder="J3 Nom" id="grayed-outNom3"></div>  
+                <div class="grid-item"><input type="text" class="Input-equipe" placeholder="J1 Prénom" id="grayed-outPrenom1"></div>
+                <div class="grid-item"><input type="text" class="Input-equipe" placeholder="J2 Prénom" id="grayed-outPrenom2"></div>
+                <div class="grid-item"><input type="text" class="Input-equipe" placeholder="J3 Prénom" id="grayed-outPrenom3"></div>  
+                <div class="grid-item"><input type="text" class="Input-equipe" placeholder="J1 Pseudo" id="grayed-outPseudo1"></div>
+                <div class="grid-item"><input type="text" class="Input-equipe" placeholder="J2 Pseudo" id="grayed-outPseudo2"></div>
+                <div class="grid-item"><input type="text" class="Input-equipe" placeholder="J3 Pseudo" id="grayed-outPseudo3"></div>
+          </div>
+
+
+
+          
+          
+
+    </form>
+    <input type="button" id="ButtonValider" value="Valider">
+        <footer>
+          
+        <button type="image" class="LogoMissions" id="LogoMissions"> <img src="Images/LogoMissions.png" > </button>
+        
+        
+        
+        
+        </footer>
+
+
+        <script src="Equipe.js"></script>
+  </body>
+
+
+</html>
